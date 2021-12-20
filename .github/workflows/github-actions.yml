@@ -16,6 +16,9 @@ jobs:
   unit-test:
 
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        java-version: [ 11 ]
     steps:
       - name: Checkout Ambry
         uses: actions/checkout@v2
@@ -23,11 +26,11 @@ jobs:
         with:
           fetch-depth: 0
 
-      - name: Set up JDK 11
+      - name: Set up JDK ${{ matrix.java-version }}
         uses: actions/setup-java@v2
         with:
-          java-version: '11'
-          distribution: 'adopt'
+          java-version: ${{ matrix.java-version }}
+          distribution: 'zulu'
 
       - uses: burrunan/gradle-cache-action@v1
         name: Run unit tests excluding ambry-store
@@ -42,6 +45,9 @@ jobs:
   store-test:
 
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        java-version: [ 11 ]
     steps:
       - name: Checkout Ambry
         uses: actions/checkout@v2
@@ -49,11 +55,11 @@ jobs:
         with:
           fetch-depth: 0
 
-      - name: Set up JDK 11
+      - name: Set up JDK ${{ matrix.java-version }}
         uses: actions/setup-java@v2
         with:
-          java-version: '11'
-          distribution: 'adopt'
+          java-version: ${{ matrix.java-version }}
+          distribution: 'zulu'
 
       - uses: burrunan/gradle-cache-action@v1
         name: Run unit tests for ambry-store
@@ -68,6 +74,9 @@ jobs:
   int-test:
 
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        java-version: [ 11 ]
     steps:
       - name: Checkout Ambry
         uses: actions/checkout@v2
@@ -75,11 +84,11 @@ jobs:
         with:
           fetch-depth: 0
 
-      - name: Set up JDK 11
+      - name: Set up JDK ${{ matrix.java-version }}
         uses: actions/setup-java@v2
         with:
-          java-version: '11'
-          distribution: 'adopt'
+          java-version: ${{ matrix.java-version }}
+          distribution: 'zulu'
 
       - name: Set up MySQL
         run: |
@@ -111,6 +120,9 @@ jobs:
   publish:
 
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        java-version: [ 11 ]
     needs: [ unit-test, store-test, int-test ]
     if: ${{ github.event_name == 'push' && github.ref == 'refs/heads/master' }}
     env:
@@ -124,11 +136,11 @@ jobs:
         with:
           fetch-depth: 0
 
-      - name: Set up JDK 11
+      - name: Set up JDK ${{ matrix.java-version }}
         uses: actions/setup-java@v2
         with:
-          java-version: '11'
-          distribution: 'adopt'
+          java-version: ${{ matrix.java-version }}
+          distribution: 'zulu'
 
       - uses: burrunan/gradle-cache-action@v1
         name: Build artifacts and create pom files
